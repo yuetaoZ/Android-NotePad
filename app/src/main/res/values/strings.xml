@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">NotePad</string>
+    <string name="additem">addItem</string>
+    <string name="getinfo">getInfo</string>
 </resources>
