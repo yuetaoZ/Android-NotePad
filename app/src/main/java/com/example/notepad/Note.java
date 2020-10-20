@@ -19,13 +19,15 @@ public class Note {
         this.noteText = "";
     }
 
-    public String getTitle() {
+    public String getNoteTitle() {
         return title;
     }
 
     public String getNoteText() {
         return noteText;
     }
+
+    public String getNoteTime() { return time.toString(); }
 
     public void setTitle(String title) {
         this.title = title;
