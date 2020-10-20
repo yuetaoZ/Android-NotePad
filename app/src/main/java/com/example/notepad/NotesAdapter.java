@@ -9,10 +9,7 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.recyclerview.widget.RecyclerView;
-
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 public class NotesAdapter extends RecyclerView.Adapter<NoteViewHolder> {
 
