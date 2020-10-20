@@ -2,4 +2,7 @@
     <string name="app_name">NotePad</string>
     <string name="additem">addItem</string>
     <string name="getinfo">getInfo</string>
+    <string name="notetitle">noteTitle</string>
+    <string name="notetime">noteTime</string>
+    <string name="notetext">noteText</string>
 </resources>
