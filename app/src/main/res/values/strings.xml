@@ -5,4 +5,6 @@
     <string name="notetitle">noteTitle</string>
     <string name="notetime">noteTime</string>
     <string name="notetext">noteText</string>
+    <string name="editnotetitle">editNoteTitle</string>
+    <string name="editnotetext">editNoteText</string>
 </resources>

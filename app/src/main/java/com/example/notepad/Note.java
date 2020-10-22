@@ -4,11 +4,13 @@ import android.os.Build;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
+
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import static java.time.LocalDateTime.now;
 
 @RequiresApi(api = Build.VERSION_CODES.O)
-public class Note {
+public class Note implements Serializable {
     private String title;
     private String noteText;
     private LocalDateTime time = LocalDateTime.now();
