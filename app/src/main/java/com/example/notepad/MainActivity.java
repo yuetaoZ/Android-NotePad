@@ -106,11 +106,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void addNewNote() {
         Note newNote = new Note();
         newNote.updateTime();
-        noteList.add(0, newNote);
 
         Intent intent = new Intent(this, SecondActivity.class);
         intent.putExtra("Note", newNote);
-        intent.putExtra("Position", 0);
+        intent.putExtra("Position", -1);
 
         startActivityForResult(intent, SECOND_ACTIVITY_REQUEST_CODE);
     }
@@ -137,20 +136,40 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if (requestCode == SECOND_ACTIVITY_REQUEST_CODE){
             if (resultCode == RESULT_OK) {
                 if (data != null) {
+                    Note originalNote;
+                    Note updatedNote;
                     int pos = data.getIntExtra("Position", -1);
-                    Note originalNote = noteList.get(pos);
-                    Note updatedNote = (Note) data.getSerializableExtra("Note");
-                    if (updatedNote != null) {
-                        originalNote.setTitle(updatedNote.getNoteTitle());
-                        originalNote.setNoteText(updatedNote.getNoteText());
-                        notesAdapter.notifyItemChanged(pos);
-                        saveData();
-                        Toast.makeText(this, "Result changed", Toast.LENGTH_SHORT).show();
+
+                    if (pos == -1) {
+                        originalNote = new Note();
                     } else {
-                        noteList.remove(pos);
-                        notesAdapter.notifyItemRemoved(pos);
-                        saveData();
-                        //Toast.makeText(this, "Result changed", Toast.LENGTH_SHORT).show();
+                        originalNote = noteList.get(pos);
+                    }
+                    updatedNote = (Note) data.getSerializableExtra("Note");
+
+                    if (updatedNote != null) {
+                        if (noteHasChanged(originalNote, updatedNote)) {
+                            originalNote.setTitle(updatedNote.getNoteTitle());
+                            originalNote.setNoteText(updatedNote.getNoteText());
+                            originalNote.updateTime();
+                            if (pos == -1) {
+                                noteList.add(0, originalNote);
+                                notesAdapter.notifyItemInserted(0);
+                            } else {
+                                notesAdapter.notifyItemChanged(pos);
+                            }
+                            saveData();
+                            Toast.makeText(this, "Result changed", Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(this, "Result didn't change", Toast.LENGTH_SHORT).show();
+                        }
+                    } else {
+                        if (pos != -1) {
+                            noteList.remove(pos);
+                            notesAdapter.notifyItemRemoved(pos);
+                            saveData();
+                            Toast.makeText(this, "Result changed", Toast.LENGTH_SHORT).show();
+                        }
                     }
                 }
             } else {
@@ -159,6 +178,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         } else {
             Toast.makeText(this, "Unexpected code received: " + requestCode, Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    private boolean noteHasChanged(Note originalNote, Note updatedNote) {
+        if (originalNote.getNoteTitle().equals(updatedNote.getNoteTitle()) && originalNote.getNoteText().equals(updatedNote.getNoteText())) {
+            return false;
+        } else {
+            return true;
         }
     }
 

@@ -19,7 +19,7 @@ public class Note implements Serializable {
     Note() {
         this.title = "";
         this.noteText = "";
-        this.time = "";
+        this.time = LocalDateTime.now().toString();
     }
 
     public String getNoteTitle() {

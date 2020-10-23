@@ -79,43 +79,21 @@ public class SecondActivity extends AppCompatActivity {
         if (noteTitle.trim().equals("")) {
             note = null;
         } else {
-            if (noteHasChanged()) {
-                note.updateTime();
-            }
             note.setTitle(noteTitle);
             note.setNoteText(noteText);
-        }
-    }
-
-    private boolean noteHasChanged() {
-        EditText editNoteTitle = findViewById(R.id.editNoteTitle);
-        EditText editNoteText = findViewById(R.id.editNoteText);
-
-        String noteTitle = editNoteTitle.getText().toString();
-        String noteText = editNoteText.getText().toString();
-
-        if (oldNoteTitle.equals(noteTitle) && oldNoteText.equals(noteText)) {
-            return false;
-        } else {
-            return true;
         }
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public void onBackPressed() {
-        doReturn();
-        super.onBackPressed();
-    }
-
-    @RequiresApi(api = Build.VERSION_CODES.O)
-    public void doReturn() {
         saveNote();
 
         Intent intent = new Intent();
         intent.putExtra("Note", note);
         intent.putExtra("Position", pos);
         setResult(RESULT_OK, intent);
+        super.onBackPressed();
     }
 }
 
