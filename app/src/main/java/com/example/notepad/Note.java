@@ -13,12 +13,13 @@ import static java.time.LocalDateTime.now;
 public class Note implements Serializable {
     private String title;
     private String noteText;
-    private LocalDateTime time = LocalDateTime.now();
+    private String time;
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     Note() {
         this.title = "";
         this.noteText = "";
+        this.time = "";
     }
 
     public String getNoteTitle() {
@@ -29,7 +30,7 @@ public class Note implements Serializable {
         return noteText;
     }
 
-    public String getNoteTime() { return time.toString(); }
+    public String getNoteTime() { return time;}
 
     public void setTitle(String title) {
         this.title = title;
@@ -39,8 +40,7 @@ public class Note implements Serializable {
         this.noteText = noteText;
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.O)
     public void updateTime() {
-        this.time = LocalDateTime.now();
+        this.time = LocalDateTime.now().toString();
     }
 }

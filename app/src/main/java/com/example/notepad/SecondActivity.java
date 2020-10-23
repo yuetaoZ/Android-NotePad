@@ -20,6 +20,8 @@ import org.w3c.dom.Text;
 public class SecondActivity extends AppCompatActivity {
 
     private Note note = new Note();
+    private String oldNoteTitle;
+    private String oldNoteText;
     int pos;
 
     @RequiresApi(api = Build.VERSION_CODES.O)
@@ -32,23 +34,22 @@ public class SecondActivity extends AppCompatActivity {
         EditText editNoteText = findViewById(R.id.editNoteText);
 
         Intent intent = getIntent();
-        if (intent.hasExtra("Person")) {
-            note = (Note) intent.getSerializableExtra("Note");
-            if (note != null) {
-                editNoteTitle.setText(note.getNoteTitle());
-                editNoteText.setText(note.getNoteText());
-            }
-        } else {
-            editNoteTitle.setText("");
-        }
-
         if (intent.hasExtra("Position")) {
             pos = intent.getIntExtra("Position", -1);
         }
 
-        long time = intent.getLongExtra("Time", 0);
-
-        Toast.makeText(this, "Time: " + time, Toast.LENGTH_SHORT).show();
+        if (intent.hasExtra("Note")) {
+            note = (Note) intent.getSerializableExtra("Note");
+            if (note != null) {
+                oldNoteTitle = note.getNoteTitle();
+                oldNoteText = note.getNoteText();
+                editNoteTitle.setText(oldNoteTitle);
+                editNoteText.setText(oldNoteText);
+            }
+        } else {
+            editNoteTitle.setText("");
+            editNoteText.setText("");
+        }
     }
 
     @Override
@@ -59,33 +60,62 @@ public class SecondActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-
-        //saveNote();
-        return true;
-    }
-
-    @RequiresApi(api = Build.VERSION_CODES.O)
-    public void doReturn() {
-
-        EditText editNoteTitle = findViewById(R.id.editNoteTitle);
-        EditText editNoteText = findViewById(R.id.editNoteText);
-
-        note.setTitle(editNoteTitle.getText().toString());
-        note.setNoteText(editNoteText.getText().toString());
-
+        saveNote();
         Intent intent = new Intent();
         intent.putExtra("Note", note);
         intent.putExtra("Position", pos);
         setResult(RESULT_OK, intent);
         finish();
+        return true;
     }
 
+    private void saveNote() {
+        EditText editNoteTitle = findViewById(R.id.editNoteTitle);
+        EditText editNoteText = findViewById(R.id.editNoteText);
+
+        String noteTitle = editNoteTitle.getText().toString();
+        String noteText = editNoteText.getText().toString();
+
+        if (noteTitle.trim().equals("")) {
+            note = null;
+        } else {
+            if (noteHasChanged()) {
+                note.updateTime();
+            }
+            note.setTitle(noteTitle);
+            note.setNoteText(noteText);
+        }
+    }
+
+    private boolean noteHasChanged() {
+        EditText editNoteTitle = findViewById(R.id.editNoteTitle);
+        EditText editNoteText = findViewById(R.id.editNoteText);
+
+        String noteTitle = editNoteTitle.getText().toString();
+        String noteText = editNoteText.getText().toString();
+
+        if (oldNoteTitle.equals(noteTitle) && oldNoteText.equals(noteText)) {
+            return false;
+        } else {
+            return true;
+        }
+    }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public void onBackPressed() {
         doReturn();
         super.onBackPressed();
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    public void doReturn() {
+        saveNote();
+
+        Intent intent = new Intent();
+        intent.putExtra("Note", note);
+        intent.putExtra("Position", pos);
+        setResult(RESULT_OK, intent);
     }
 }
 

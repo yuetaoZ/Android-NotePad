@@ -8,4 +8,6 @@
     <string name="editnotetitle">editNoteTitle</string>
     <string name="editnotetext">editNoteText</string>
     <string name="savenote">saveNote</string>
+    <string name="file_name">Notes.json</string>
+    <string name="no_file">No JSON Notes File Present</string>
 </resources>

@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.Menu;
@@ -14,6 +15,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import java.lang.reflect.Type;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,7 +27,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private static final int SECOND_ACTIVITY_REQUEST_CODE = 1;
     private static final String TAG = "MainActivity";
-    private final List<Note> noteList = new ArrayList<>();  // Main content is here
+    List<Note> noteList;  // Main content is here
     private RecyclerView recyclerView; // Layout's recyclerview
     private NotesAdapter notesAdapter;
 
@@ -31,15 +37,44 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        SharedPreferences sharedPreferences = getSharedPreferences("shared preferences", MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.clear();
+
+        loadData();
         recyclerView = findViewById(R.id.recycler);
         // Data to recyclerview adapter
         notesAdapter = new NotesAdapter(noteList, this);
         recyclerView.setAdapter(notesAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        //Make some data - not always needed - just used to fill list
-        for (int i = 0; i < 30; i++) {
-            noteList.add(new Note());
+
+    }
+
+    private void loadData() {
+        SharedPreferences sharedPreferences = getSharedPreferences("shared preferences", MODE_PRIVATE);
+        Gson gson = new Gson();
+        String json = sharedPreferences.getString("note list", null);
+        Type type = new TypeToken<ArrayList<Note>>() {}.getType();
+        noteList = gson.fromJson(json, type);
+
+        if (noteList == null) {
+            noteList = new ArrayList<>();
         }
+    }
+
+    @Override
+    protected void onPause() {
+        saveData();
+        super.onPause();
+    }
+
+    private void saveData() {
+        SharedPreferences sharedPreferences = getSharedPreferences("shared preferences", MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        Gson gson = new Gson();
+        String json = gson.toJson(noteList);
+        editor.putString("note list", json);
+        editor.apply();
     }
 
     @Override
@@ -48,6 +83,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         return true;
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
@@ -66,10 +102,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void getAppInformation() {
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     private void addNewNote() {
+        Note newNote = new Note();
+        newNote.updateTime();
+        noteList.add(0, newNote);
+
+        Intent intent = new Intent(this, SecondActivity.class);
+        intent.putExtra("Note", newNote);
+        intent.putExtra("Position", 0);
+
+        startActivityForResult(intent, SECOND_ACTIVITY_REQUEST_CODE);
     }
 
     // From OnClickListener
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public void onClick(View v) {  // click listener called by ViewHolder clicks
         int pos = recyclerView.getChildLayoutPosition(v);
@@ -77,7 +124,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Intent intent = new Intent(this, SecondActivity.class);
         intent.putExtra("Note", note);
         intent.putExtra("Position", pos);
-        intent.putExtra("Time", System.currentTimeMillis());
 
         startActivityForResult(intent, SECOND_ACTIVITY_REQUEST_CODE);
     }
@@ -95,10 +141,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     Note originalNote = noteList.get(pos);
                     Note updatedNote = (Note) data.getSerializableExtra("Note");
                     if (updatedNote != null) {
-                        originalNote.setTitle(updatedNote.getNoteTitle().toString());
-                        originalNote.setNoteText(updatedNote.getNoteText().toString());
+                        originalNote.setTitle(updatedNote.getNoteTitle());
+                        originalNote.setNoteText(updatedNote.getNoteText());
                         notesAdapter.notifyItemChanged(pos);
+                        saveData();
                         Toast.makeText(this, "Result changed", Toast.LENGTH_SHORT).show();
+                    } else {
+                        noteList.remove(pos);
+                        notesAdapter.notifyItemRemoved(pos);
+                        saveData();
+                        //Toast.makeText(this, "Result changed", Toast.LENGTH_SHORT).show();
                     }
                 }
             } else {
