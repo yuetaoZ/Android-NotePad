@@ -1,6 +1,8 @@
 package com.example.notepad;
 
 import android.app.Activity;
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -12,6 +14,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import org.w3c.dom.Text;
@@ -87,13 +90,54 @@ public class SecondActivity extends AppCompatActivity {
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public void onBackPressed() {
-        saveNote();
+        if (noteChanged()) {
+            Toast.makeText(this, "Note has changed!", Toast.LENGTH_SHORT).show();
 
-        Intent intent = new Intent();
-        intent.putExtra("Note", note);
-        intent.putExtra("Position", pos);
-        setResult(RESULT_OK, intent);
-        super.onBackPressed();
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("Title");
+            builder.setMessage("Do you want to save the note changes?");
+
+            builder.setPositiveButton("SAVE", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                    saveNote();
+                    Intent intent = new Intent();
+                    intent.putExtra("Note", note);
+                    intent.putExtra("Position", pos);
+                    setResult(RESULT_OK, intent);
+                    SecondActivity.super.onBackPressed();
+                }
+            });
+            builder.setNegativeButton("NOT SAVE", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                    Intent intent = new Intent();
+                    intent.putExtra("Note", note);
+                    intent.putExtra("Position", pos);
+                    setResult(RESULT_OK, intent);
+                    SecondActivity.super.onBackPressed();
+                }
+            });
+
+            builder.show();
+        } else {
+            Intent intent = new Intent();
+            intent.putExtra("Note", note);
+            intent.putExtra("Position", pos);
+            setResult(RESULT_OK, intent);
+            SecondActivity.super.onBackPressed();
+        }
+    }
+
+    private boolean noteChanged() {
+        EditText editNoteTitle = findViewById(R.id.editNoteTitle);
+        EditText editNoteText = findViewById(R.id.editNoteText);
+        String noteTitle = editNoteTitle.getText().toString();
+        String noteText = editNoteText.getText().toString();
+
+        if (oldNoteTitle.equals(noteTitle) && oldNoteText.equals(noteText)) {
+            return false;
+        } else {
+            return true;
+        }
     }
 }
 
