@@ -19,7 +19,6 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -137,39 +136,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             if (resultCode == RESULT_OK) {
                 if (data != null) {
                     Note originalNote;
-                    Note updatedNote;
-                    int pos = data.getIntExtra("Position", -1);
+                    Note updatedNote = (Note) data.getSerializableExtra("Note");
 
+                    int pos = data.getIntExtra("Position", -1);
                     if (pos == -1) {
                         originalNote = new Note();
                     } else {
                         originalNote = noteList.get(pos);
                     }
-                    updatedNote = (Note) data.getSerializableExtra("Note");
 
                     if (updatedNote != null) {
-                        if (noteHasChanged(originalNote, updatedNote)) {
-                            originalNote.setTitle(updatedNote.getNoteTitle());
-                            originalNote.setNoteText(updatedNote.getNoteText());
-                            originalNote.updateTime();
-                            if (pos == -1) {
-                                noteList.add(0, originalNote);
-                                notesAdapter.notifyItemInserted(0);
-                            } else {
-                                notesAdapter.notifyItemChanged(pos);
-                            }
-                            saveData();
-                            Toast.makeText(this, "Result changed", Toast.LENGTH_SHORT).show();
-                        } else {
-                            Toast.makeText(this, "Result didn't change", Toast.LENGTH_SHORT).show();
-                        }
+                        updateNote(originalNote, updatedNote, pos);
                     } else {
-                        if (pos != -1) {
-                            noteList.remove(pos);
-                            notesAdapter.notifyItemRemoved(pos);
-                            saveData();
-                            Toast.makeText(this, "Result changed", Toast.LENGTH_SHORT).show();
-                        }
+                        deleteNote(pos);
                     }
                 }
             } else {
@@ -182,11 +161,42 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
+    private void updateNote(Note originalNote, Note updatedNote, int pos) {
+        if (noteHasChanged(originalNote, updatedNote)) {
+
+            originalNote.setTitle(updatedNote.getNoteTitle());
+            originalNote.setNoteText(updatedNote.getNoteText());
+            originalNote.updateTime();
+
+            if (pos == -1) {
+                noteList.add(0, originalNote);
+                notesAdapter.notifyItemInserted(0);
+            } else {
+                notesAdapter.notifyItemChanged(pos);
+            }
+
+            saveData();
+            Toast.makeText(this, "Result changed", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(this, "Result didn't change", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
     private boolean noteHasChanged(Note originalNote, Note updatedNote) {
         if (originalNote.getNoteTitle().equals(updatedNote.getNoteTitle()) && originalNote.getNoteText().equals(updatedNote.getNoteText())) {
             return false;
         } else {
             return true;
+        }
+    }
+
+    private void deleteNote(int pos) {
+        if (pos != -1) {
+            noteList.remove(pos);
+            notesAdapter.notifyItemRemoved(pos);
+            saveData();
+            Toast.makeText(this, "Result changed", Toast.LENGTH_SHORT).show();
         }
     }
 
