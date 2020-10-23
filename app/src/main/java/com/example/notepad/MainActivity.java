@@ -25,7 +25,6 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, View.OnLongClickListener {
 
     private static final int SECOND_ACTIVITY_REQUEST_CODE = 1;
-    private static final String TAG = "MainActivity";
     List<Note> noteList;  // Main content is here
     private RecyclerView recyclerView; // Layout's recyclerview
     private NotesAdapter notesAdapter;
@@ -35,10 +34,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        SharedPreferences sharedPreferences = getSharedPreferences("shared preferences", MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.clear();
 
         loadData();
         recyclerView = findViewById(R.id.recycler);
@@ -86,16 +81,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
-        switch (item.getItemId()) {
-            case R.id.addItem:
-                addNewNote();
-                return true;
-            case R.id.getInfo:
-                getAppInformation();
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
+        if(item.getItemId() == R.id.addItem) {
+            addNewNote();
+            return true;
+        } else if (item.getItemId() == R.id.getInfo) {
+            getAppInformation();
+            return true;
+        } else {
+            return super.onOptionsItemSelected(item);
         }
+
     }
 
     private void getAppInformation() {
@@ -184,11 +179,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     private boolean noteHasChanged(Note originalNote, Note updatedNote) {
-        if (originalNote.getNoteTitle().equals(updatedNote.getNoteTitle()) && originalNote.getNoteText().equals(updatedNote.getNoteText())) {
-            return false;
-        } else {
-            return true;
-        }
+        return !originalNote.getNoteTitle().equals(updatedNote.getNoteTitle()) || !originalNote.getNoteText().equals(updatedNote.getNoteText());
     }
 
     private void deleteNote(int pos) {

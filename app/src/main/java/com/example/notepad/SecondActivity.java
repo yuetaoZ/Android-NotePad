@@ -1,23 +1,17 @@
 package com.example.notepad;
 
-import android.app.Activity;
-import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-
-import org.w3c.dom.Text;
 
 @RequiresApi(api = Build.VERSION_CODES.O)
 public class SecondActivity extends AppCompatActivity {
@@ -133,11 +127,7 @@ public class SecondActivity extends AppCompatActivity {
         String noteTitle = editNoteTitle.getText().toString();
         String noteText = editNoteText.getText().toString();
 
-        if (oldNoteTitle.equals(noteTitle) && oldNoteText.equals(noteText)) {
-            return false;
-        } else {
-            return true;
-        }
+        return !oldNoteTitle.equals(noteTitle) || !oldNoteText.equals(noteText);
     }
 }
 
