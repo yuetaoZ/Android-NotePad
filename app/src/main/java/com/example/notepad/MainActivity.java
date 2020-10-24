@@ -158,16 +158,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @RequiresApi(api = Build.VERSION_CODES.O)
     private void updateNote(Note originalNote, Note updatedNote, int pos) {
         if (noteHasChanged(originalNote, updatedNote)) {
+            Note newNote = new Note();
 
-            originalNote.setTitle(updatedNote.getNoteTitle());
-            originalNote.setNoteText(updatedNote.getNoteText());
-            originalNote.updateTime();
+            newNote.setTitle(updatedNote.getNoteTitle());
+            newNote.setNoteText(updatedNote.getNoteText());
+            newNote.updateTime();
 
             if (pos == -1) {
-                noteList.add(0, originalNote);
+                noteList.add(0, newNote);
                 notesAdapter.notifyItemInserted(0);
             } else {
-                notesAdapter.notifyItemChanged(pos);
+                noteList.remove(pos);
+                notesAdapter.notifyItemRemoved(pos);
+                noteList.add(0, newNote);
+                notesAdapter.notifyItemInserted(0);
             }
 
             saveData();
