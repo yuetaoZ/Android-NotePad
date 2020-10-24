@@ -98,6 +98,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void getAppInformation() {
+        Intent intent = new Intent(this, AboutActivity.class);
+        startActivity(intent);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
@@ -157,6 +159,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         } else {
             Toast.makeText(this, "Unexpected code received: " + requestCode, Toast.LENGTH_SHORT).show();
         }
+        this.setTitle("Multi Notes (" + noteList.size() + ")");
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
@@ -212,6 +215,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         });
 
         builder.show();
+        super.setTitle("Multi Notes (" + noteList.size() + ")");
         return false;
     }
 

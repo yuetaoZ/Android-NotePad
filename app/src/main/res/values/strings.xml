@@ -10,4 +10,7 @@
     <string name="savenote">saveNote</string>
     <string name="file_name">Notes.json</string>
     <string name="no_file">No JSON Notes File Present</string>
+    <string name="copyright">© 2020, Yuetao Zhu</string>
+    <string name="multi_notes">Multi Notes</string>
+    <string name="versioninfo">Version 1.0</string>
 </resources>
