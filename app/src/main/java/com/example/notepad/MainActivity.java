@@ -147,7 +147,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     if (updatedNote != null) {
                         updateNote(originalNote, updatedNote, pos);
                     } else {
-                        deleteNote(pos);
+                        Toast.makeText(this, "A note without a TITLE is not allowed to be SAVED", Toast.LENGTH_SHORT).show();
                     }
                 }
             } else {
@@ -178,7 +178,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 notesAdapter.notifyItemInserted(0);
             }
 
-            saveData();
+            //saveData();
             Toast.makeText(this, "Result changed", Toast.LENGTH_SHORT).show();
         } else {
             Toast.makeText(this, "Result didn't change", Toast.LENGTH_SHORT).show();
@@ -194,7 +194,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if (pos != -1) {
             noteList.remove(pos);
             notesAdapter.notifyItemRemoved(pos);
-            saveData();
+            //saveData();
             Toast.makeText(this, "Result changed", Toast.LENGTH_SHORT).show();
         }
     }
