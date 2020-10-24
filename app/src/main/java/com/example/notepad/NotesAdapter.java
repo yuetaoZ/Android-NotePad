@@ -42,9 +42,12 @@ public class NotesAdapter extends RecyclerView.Adapter<NoteViewHolder> {
         Log.d(TAG, "onBindViewHolder: FILLING VIEW HOLDER Note " + position);
 
         Note note = noteList.get(position);
+        String text = note.getNoteText();
+        int textSize = Math.min(79, text.length());
+        String displayText = textSize < 79 ? text.substring(0, textSize) : text.substring(0, textSize) + "...";
 
         holder.noteTitle.setText(note.getNoteTitle());
-        holder.noteText.setText(note.getNoteText());
+        holder.noteText.setText(displayText);
         holder.noteTime.setText(note.getNoteTime());
     }
 
