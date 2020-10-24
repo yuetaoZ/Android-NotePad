@@ -2,10 +2,12 @@ package com.example.notepad;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
@@ -197,10 +199,26 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     // From OnLongClickListener
     @Override
-    public boolean onLongClick(View v) {  // long click listener called by ViewHolder long clicks
-        int pos = recyclerView.getChildLayoutPosition(v);
-        Note m = noteList.get(pos);
-        Toast.makeText(v.getContext(), "LONG " + m.toString(), Toast.LENGTH_SHORT).show();
+    public boolean onLongClick(final View v) {  // long click listener called by ViewHolder long clicks
+        final int pos = recyclerView.getChildLayoutPosition(v);
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("DELETE");
+        builder.setMessage("Do you want to delete the note?");
+
+        builder.setPositiveButton("DELETE", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                noteList.remove(pos);
+                notesAdapter.notifyItemRemoved(pos);
+                saveData();
+            }
+        });
+        builder.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+            }
+        });
+
+        builder.show();
         return false;
     }
 
