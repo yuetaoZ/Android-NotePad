@@ -38,6 +38,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_main);
 
         loadData();
+        this.setTitle("Multi Notes (" + noteList.size() + ")");
+
         recyclerView = findViewById(R.id.recycler);
         // Data to recyclerview adapter
         notesAdapter = new NotesAdapter(noteList, this);
