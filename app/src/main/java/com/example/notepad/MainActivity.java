@@ -147,7 +147,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     if (updatedNote != null) {
                         updateNote(originalNote, updatedNote, pos);
                     } else {
-                        Toast.makeText(this, "A note without a TITLE is not allowed to be SAVED", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, "Can not save note without a TITLE", Toast.LENGTH_SHORT).show();
                     }
                 }
             } else {
@@ -188,15 +188,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @RequiresApi(api = Build.VERSION_CODES.O)
     private boolean noteHasChanged(Note originalNote, Note updatedNote) {
         return !originalNote.getNoteTitle().equals(updatedNote.getNoteTitle()) || !originalNote.getNoteText().equals(updatedNote.getNoteText());
-    }
-
-    private void deleteNote(int pos) {
-        if (pos != -1) {
-            noteList.remove(pos);
-            notesAdapter.notifyItemRemoved(pos);
-            //saveData();
-            Toast.makeText(this, "Result changed", Toast.LENGTH_SHORT).show();
-        }
     }
 
     // From OnLongClickListener
